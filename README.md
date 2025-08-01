@@ -13,6 +13,8 @@ eval "$(/$HOME/miniforge3/bin/conda shell.bash hook)"
 ```
 # conda environment for various utilities
 conda env create --file environment_files/environment_utils.yml -p /$HOME/miniforge3/envs/utils
+# Fix pyfasta to make it compatible with python 3.13.5 and numpy 2.3.1
+sh environment_files/fix_pyfasta.sh
 
 # conda environment for OpenSpliceAI dependencies
 # OpenSpliceAI will be installed within the environment
