@@ -12,17 +12,17 @@ eval "$(/$HOME/miniforge3/bin/conda shell.bash hook)"
 2. Create conda environments using yml files
 ```
 # conda environment for various utilities
-conda env create --file environment_files/environment_utils.yml -p /$HOME/miniforge3/envs/utils
+conda env create --file environment_files/environment_utils.yml -p $HOME/miniforge3/envs/utils
 # Fix pyfasta to make it compatible with python 3.13.5 and numpy 2.3.1
 sh environment_files/fix_pyfasta.sh
 
 # conda environment for OpenSpliceAI dependencies
 # OpenSpliceAI will be installed within the environment
-conda env create --file environment_files/environment_openspliceai.yml -p /$HOME/miniforge3/envs/openspliceai
+conda env create --file environment_files/environment_openspliceai.yml -p $HOME/miniforge3/envs/openspliceai
 
 # conda environment for SpliceBERT dependencies
 # SpliceBERT will need to be downloaded separately from https://github.com/chenkenbio/SpliceBERT/ or Zenodo
-conda env create --file environment_files/environment_llm.yml -p /$HOME/miniforge3/envs/llm
+conda env create --file environment_files/environment_llm.yml -p $HOME/miniforge3/envs/llm
 ```
 
 
