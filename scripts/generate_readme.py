@@ -470,7 +470,7 @@ def generate_readme_content(config, project_root):
                 # 3. Use the found description or a fallback message
                 if description:
                     github_prefix = config.get('github_notebook_url_prefix', '')
-                    script_link = f"[{relative_script_path_str}]({github_prefix}{relative_script_path_str})" if github_prefix else f"`{relative_script_path_str}`"
+                    script_link = f"[{relative_script_path_str}]({github_prefix}/{relative_script_path_str})" if github_prefix else f"`{relative_script_path_str}`"
                     readme_lines.append(f"- {script_link}: {description}\n")
                 else:
                     readme_lines.append(f"- `{relative_script_path_str}`: *No description found.*\n") # Updated fallback message
