@@ -30,7 +30,8 @@ setup_instructions: |
     # conda environment for SpliceBERT dependencies
     conda env create --file environment_files/environment_llm.yml -p $HOME/miniforge3/envs/llm
     ```
-    4. Download project files and SpliceBERT and OpenSpliceAI models from [Zenodo](https://doi.org/10.5281/zenodo.16730945) and unzip them within this repository. The complete directory structure should look like:
+    4. Download project files and SpliceBERT and OpenSpliceAI models from [Zenodo](https://doi.org/10.5281/zenodo.16730945) 
+    and unzip them within this repository. The complete directory structure should look like:
     ```
     HBV_splicing_paper_2025/
     └── data/
@@ -57,10 +58,12 @@ src_dir: src
 processed_data_dir: . # The relative path to your processed files directory
 
 processed_data_description: |
-  The `data/processed_files/` directory contains intermediate data files generated
+  The `data/processed_files/` directory contains intermediate processed data files generated
   during the various stages of the analysis pipeline. These files are typically derived
   from raw data through complex transformations and computations performed by Bash
-  commands and Python scripts executed within the Jupyter notebooks.
+  commands and Python scripts executed within the Jupyter notebooks. These directories 
+  and files will be present if the [Zenodo archive](https://doi.org/10.5281/zenodo.16730945) 
+  has been successfully unpacked within the root repository directory.
 
   Key output files include:
   - **Cleaned Data Files (`.csv`, `.pkl.gz`):** Data files in results/data.

@@ -1,6 +1,7 @@
 import nbformat
 import os
 import re
+from typing import Union
 import logging
 import yaml
 from pathlib import Path
@@ -9,7 +10,9 @@ from collections import Counter
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
+
 # description: Functions to generate README files automatically.
+
 
 # --- Helper Functions ---
 
@@ -132,89 +135,136 @@ def read_notebook_metadata(notebook_path):
         return None, None
 
     
-def extract_file_usages(notebook_path, require_directory_path=True):
-    """
-    Extracts file paths read or written in Bash and Python cells, and infers descriptions.
 
-    Args:
-        notebook_path (Path): The path to the Jupyter notebook.
-        require_directory_path (bool): If True, only include files that have a
-                                      directory component (e.g., 'data/file.txt' is included,
-                                      'file.txt' is ignored). Defaults to True.
-    Returns:
-        tuple: A tuple containing two dictionaries (inputs, outputs).
-               Each dictionary maps file path strings to their inferred descriptions.
+# --- Helper function for robust path validation ---
+def _validate_path_string(path_str: str, require_directory_path: bool) -> bool:
     """
-    extracted_inputs = {}
-    extracted_outputs = {}
+    Applies a series of robust filters to determine if a string is a valid file path.
+    """
+    # Strip quotes before validation if they are present
+    path = path_str.strip('\'"')
+
+    # 1. Basic checks
+    if not path or path.strip() == '': # Empty or whitespace-only
+        logging.debug(f"Filtered out (empty/whitespace): '{path_str}'")
+        return False
+    if path.startswith(('http://', 'https://', 'ftp://')): # Explicitly exclude URLs
+        logging.debug(f"Filtered out (URL): '{path_str}'")
+        return False
+    if '.ipynb_checkpoints' in path: # Exclude checkpoint dirs
+        logging.debug(f"Filtered out (checkpoint): '{path_str}'")
+        return False
+
+    # 2. Apply require_directory_path filter
+    if require_directory_path:
+        path_obj = Path(path)
+        # Check if the path has a parent directory component other than '.' or ''
+        if str(path_obj.parent) == '.' or str(path_obj.parent) == '':
+            logging.debug(f"Filtered out (no directory, required): '{path_str}'")
+            return False
+
+    # 3. Robust regex-based filters from your previous version
+    if (
+        path.isdigit() or                                      # Path is just a number (e.g., '123')
+        re.match(r'^[{}][\w,]+[{}]$', path) or                 # Looks like a dictionary/set literal (e.g., '{a,b}')
+        re.match(r'^-[\w_]+$', path) or                        # Command-line flags (e.g., '-f', '--help')
+        re.match(r'^[=\w-]+$', path) or                        # Simple arguments (e.g., '=1.5', 'True', 'False', 'my-arg')
+        re.search(r'[\\;,$&*`]', path) or                      # Contains problematic shell characters (typically not in valid paths)
+        (re.search(r'\s', path) and not (path.startswith('"') and path.endswith('"')) and not (path.startswith("'") and path.endswith("'"))) or # Spaces in unquoted paths
+        not re.search(r'\.([a-zA-Z0-9]{2,5})$', path) or       # MUST have a file extension of 2-5 alphanumeric chars
+        re.search(r'\.\d+$', path)                             # Explicitly excludes extensions that are just numbers (e.g., 'file.1', 'file.2')
+    ):
+        logging.debug(f"Filtered out (general pattern match): '{path_str}'")
+        return False
+        
+    return True
+
+
+
+# --- Updated extract_file_usages function ---
+def extract_file_usages(notebook_path: Path, project_root: Path, require_directory_path: bool = True) -> Union[tuple[dict[str, str], dict[str, str]], tuple[dict, dict]]:
+    """
+    Extracts file paths (inputs and outputs) from a Jupyter notebook's code cells.
+    Paths are resolved relative to the notebook's location and then normalized
+    to be relative to the project_root.
+    """
+    inputs = {}
+    outputs = {}
+    
+    # Combined regex patterns for both Python and Bash, capturing broader strings
+    # Filter out non-paths using _validate_path_string
+    file_extraction_patterns = {
+        'input': [
+            # Python read functions (e.g., pd.read_*, np.load, open, Image.open, custom reads)
+            # This pattern is broader, capturing any string in quotes,
+            # then validation will filter it.
+            r"(?:pd\.|np\.|io\.|Image\.)?(?:read_csv|read_excel|read_pickle|read_json|read_fwf|read_table|read_parquet|load|open|imread)\(\s*['\"](?P<file_path>[^'\"]+)['\"]\s*(?:,|\))",
+            r"(?:plt\.imread)\(\s*['\"](?P<file_path>[^'\"]+)['\"]\s*(?:,|\))",
+            r"(?:readRDS|load)\(\s*['\"](?P<file_path>[^'\"]+)['\"]\s*(?:,|\))" # R specific (if notebooks run R kernels)
+        ],
+        'output': [
+            # Python write functions (e.g., to_*, np.save, fig.savefig, plt.savefig, open, io.open, custom writes)
+            # Broader pattern
+            r"(?:to_csv|to_excel|to_pickle|to_json|to_parquet|np\.save|np\.savez|fig\.savefig|plt\.savefig|io\.open|open|write_csv|write_excel|save_data)\(\s*['\"](?P<file_path>[^'\"]+)['\"]\s*(?:,|\))",
+            r"(?:saveRDS|save)\(\s*['\"](?P<file_path>[^'\"]+)['\"]\s*(?:,|\))", # R specific
+            # Bash outputs/moves (redirection, mv, cp) - RE-INTEGRATED
+            r'(?:>\s*|>>\s*|2>\s*|2>&1\s*>\s*)(?P<file_path>[^\s|&;]+)', # Bash redirection (capture anything until space/pipe/ampersand/semicolon)
+            r'\b(?:mv|cp)\s+[^\s]+\s+(?P<file_path>[^\s|&;]+)' # Bash mv/cp destination (capture the last non-space arg)
+        ]
+    }
+
     try:
         with open(notebook_path, 'r', encoding='utf-8') as f:
-            notebook = nbformat.read(f, as_version=4)
-
-        # Helper function to apply common filters and add to dict
-        def add_file_to_dict(file_dict, path_str, is_output=False):
-            path = path_str.strip('\'"')
-
-            # Apply require_directory_path filter first
-            if require_directory_path:
-                path_obj = Path(path)
-                if str(path_obj.parent) == '.' or str(path_obj.parent) == '':
-                    logging.debug(f"Filtered out (no directory): '{path}'")
-                    return
-
-            # Apply other robust filters
-            if (
-                not path or
-                path.isdigit() or
-                re.match(r'^[{}][\w,]+[{}]$', path) or
-                re.match(r'^\s*$', path) or
-                re.match(r'^-[\w_]+$', path) or
-                re.match(r'^[=\w-]+$', path) or # Catches patterns like '=1.5', 'True', 'False', or other simple arguments
-                re.search(r'[\\;,$&*`]', path) or # Contains problematic shell characters (not typical in paths)
-                re.search(r'\s', path) and not (path.startswith('"') and path.endswith('"')) and not (path.startswith("'") and path.endswith("'")) or
-                not re.search(r'\.([a-zA-Z0-9]{2,5})$', path) or # MUST have a file extension of 2-5 alphabetic chars (e.g., .txt, .csv, .gz, .html, .fasta). This excludes `.5`.
-                re.search(r'\.\d+$', path) # Explicitly excludes extensions that are just numbers (e.g., file.1, file.2, or .5 in =1.5)
-            ):
-                logging.debug(f"Filtered out (general): '{path}'")
-                return
-
-            filename = os.path.basename(path)
-            desc = infer_description_from_filename(filename)
-            file_dict[path] = desc
-            logging.info(f"{'Output' if is_output else 'Input'} captured: {path} -> {desc}")
-
-
-        for cell in notebook.cells:
-            if cell.cell_type == 'code':
-                code = cell.source.replace('\\\n', ' ').replace('\n', ' ')
-
-                # --- Bash Outputs / File Operations ---
-                bash_patterns = [
-                    r'(?:>\s*|>>\s*|2>\s*|2>&1\s*>\s*)([^\s|&;]+)',
-                    r'\b(?:mv|cp)\s+[^\s]+\s+([^\s|&;]+)'
-                ]
-                bash_files_raw = []
-                for pattern in bash_patterns:
-                    bash_files_raw.extend(re.findall(pattern, code))
-
-                for path_str in bash_files_raw:
-                    add_file_to_dict(extracted_outputs, path_str, is_output=True)
-
-                # --- Python Inputs (pandas read functions) ---
-                py_read_pattern = r"(?:pd\.)?(?:read_csv|read_excel|read_pickle|read_json|read_fwf|read_table|read_parquet)\(\s*['\"]([^'\"]+)['\"]\s*(?:,|\))"
-                py_read_matches = re.findall(py_read_pattern, code)
-                for path_str in py_read_matches:
-                    add_file_to_dict(extracted_inputs, path_str, is_output=False)
-
-                # --- Python Outputs (pandas to_*, plt.savefig) ---
-                py_write_pattern = r"(?:\w+\.)?(?:to_csv|to_excel|to_pickle|to_json|to_parquet|savefig)\(\s*['\"]([^'\"]+)['\"]\s*(?:,|\))"
-                py_write_matches = re.findall(py_write_pattern, code)
-                for path_str in py_write_matches:
-                    add_file_to_dict(extracted_outputs, path_str, is_output=True)
-
+            notebook_content = nbformat.read(f, as_version=4)
     except Exception as e:
-        logging.warning(f"Could not extract file usages from {notebook_path}: {e}")
-    return extracted_inputs, extracted_outputs
+        logging.error(f"Error reading notebook {notebook_path}: {e}")
+        return {}, {}
+
+    notebook_dir = notebook_path.parent # Get the directory containing the notebook
+
+    for cell in notebook_content.cells:
+        if cell.cell_type == 'code':
+            # Flatten code for easier regex matching across lines
+            code = cell.source.replace('\\\n', ' ').replace('\n', ' ')
+
+            for file_type, patterns in file_extraction_patterns.items():
+                for pattern in patterns:
+                    for match in re.finditer(pattern, code):
+                        raw_file_path_str = match.group('file_path')
+
+                        # --- Apply validation and filtering ---
+                        if not _validate_path_string(raw_file_path_str, require_directory_path):
+                            continue # Skip if validation fails
+
+                        # --- Path Resolution (as implemented previously) ---
+                        # Ensure quotes are stripped from the path before creating a Path object
+                        path_to_resolve = raw_file_path_str.strip('\'"')
+                        
+                        # Resolve the path relative to the notebook's directory to get an absolute path
+                        absolute_file_path = (notebook_dir / Path(path_to_resolve)).resolve()
+
+                        # Make the absolute path relative to the project_root
+                        try:
+                            project_root_relative_path = absolute_file_path.relative_to(project_root)
+                        except ValueError:
+                            # This means the file is outside the project_root.
+                            # Use the absolute path as fallback, or handle as an error.
+                            logging.warning(f"File '{absolute_file_path}' for notebook '{notebook_path}' is outside project root '{project_root}'. Using absolute path.")
+                            project_root_relative_path = absolute_file_path # Fallback to absolute if not relative to root
+
+                        # Convert to string for dictionary keys
+                        final_path_str = str(project_root_relative_path)
+                        
+                        # Infer description using the basename of the *final* path
+                        description = infer_description_from_filename(os.path.basename(final_path_str))
+                        
+                        if file_type == 'input':
+                            inputs[final_path_str] = description
+                        else:
+                            outputs[final_path_str] = description
+
+    return inputs, outputs
+
 
 
 # --- Helper functions for summarization and file writing ---
@@ -259,38 +309,48 @@ def _format_file_summary(file_counts_dict, file_type_label, link_to_comprehensiv
     return summary_str
 
 
+
 def write_processed_files_readme(all_files_dict, project_root, processed_data_dir_rel, readme_name):
-    """
-    Writes a comprehensive list of all processed files to a separate Markdown file.
-    """
-    if not all_files_dict:
-        logging.info("No processed files detected to write to separate README.")
-        return
-
-    full_dir_path = Path(project_root) / processed_data_dir_rel
-    full_dir_path.mkdir(parents=True, exist_ok=True) # Ensure directory exists
-
-    readme_full_path = full_dir_path / readme_name
-    
     readme_content = []
-    readme_content.append(f"# Comprehensive List of Project Files\n\n")
+    readme_content.append(f"# Comprehensive List of Detected Project Files\n\n")
     readme_content.append("This file lists all data files detected as inputs to or outputs from the Jupyter notebooks in this repository.\n\n")
     readme_content.append("## Detected Files\n")
 
-    # Sort files alphabetically for consistent output
-    for path, description in sorted(all_files_dict.items()):
-        readme_content.append(f"- `{path}`: {description}\n")
+    # Get the full path to the directory where PROJECT_FILES.md will be generated
+    # This is the base for calculating relative paths for links
+    processed_files_readme_dir = project_root / processed_data_dir_rel
+    # Ensure this directory exists when the file is written
+    processed_files_readme_dir.mkdir(parents=True, exist_ok=True)
 
+
+    if not all_files_dict:
+        readme_content.append("No project files detected by notebooks.\n")
+    else:
+        # Sort files for consistent output
+        sorted_files = sorted(all_files_dict.items())
+
+        for file_path_relative_to_root, description in sorted_files:
+            # Construct the absolute path to the file
+            absolute_file_path = project_root / file_path_relative_to_root
+
+            # Calculate the path from the location of PROJECT_FILES.md back to the actual file
+            # os.path.relpath is excellent for this, handling '..' correctly.
+            link_target = os.path.relpath(absolute_file_path, processed_files_readme_dir)
+
+            readme_content.append(f"- [`{file_path_relative_to_root}`]({link_target}): {description}\n")
+
+    # Write the README file
+    output_path = processed_files_readme_dir / readme_name
     try:
-        with open(readme_full_path, 'w', encoding='utf-8') as f:
+        with open(output_path, 'w', encoding='utf-8') as f:
             f.writelines(readme_content)
-        logging.info(f"Successfully generated comprehensive Project Files README at: {readme_full_path}")
+        logging.info(f"Generated comprehensive file list at {output_path}")
     except Exception as e:
-        logging.error(f"Failed to write comprehensive Project Files README to {readme_full_path}: {e}")
+        logging.error(f"Error writing comprehensive file list to {output_path}: {e}")
+        
+        
 
-
-
-def extract_script_description(script_path: Path, max_lines_to_check: int = 20) -> str | None:
+def extract_script_description(script_path: Path, max_lines_to_check: int = 20) -> Union[str, None]:
     """
     Extracts a description from a script file by looking for '# description:' in the first few lines.
 
@@ -299,7 +359,7 @@ def extract_script_description(script_path: Path, max_lines_to_check: int = 20) 
         max_lines_to_check (int): The maximum number of lines to read from the start of the file.
 
     Returns:
-        str | None: The extracted description string, or None if not found or an error occurs.
+        Union[str | None]: The extracted description string, or None if not found or an error occurs.
     """
     try:
         with open(script_path, 'r', encoding='utf-8') as f:
@@ -402,7 +462,7 @@ def generate_readme_content(config, project_root):
 
                 # Extract files for this notebook
                 require_dir = config.get('extract_files_require_directory_path', True)
-                nb_inputs, nb_outputs = extract_file_usages(notebook_path, require_directory_path=require_dir)
+                nb_inputs, nb_outputs = extract_file_usages(notebook_path, project_root, require_directory_path=require_dir)
 
                 # Collect all detected files into the master list
                 all_processed_files.update(nb_inputs)
