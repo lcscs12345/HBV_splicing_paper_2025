@@ -112,10 +112,10 @@ Helps generate the frequency of splice site motifs across genomic sequences.
   - This notebook generates 10 'FASTA file containing nucleotide sequences.' files, 6 'Genomic features in BED format.' files, 6 'Mapped coSI scores to exonic splice sites.' files, 2 other files. For a comprehensive list, see the [Project Files README](./PROJECT_FILES.md).
 
 ## Scripts
-- [scripts/common.py](https://github.com/lcscs12345/HBV_splicing_paper_2025/tree/mainscripts/common.py): Utility functions for reading fasta sequences, motif extraction, and calculate performance metrics for a classifier.
-- [scripts/dicts.py](https://github.com/lcscs12345/HBV_splicing_paper_2025/tree/mainscripts/dicts.py): Dictionaries for HBV and human splice sites.
-- [scripts/generate_readme.py](https://github.com/lcscs12345/HBV_splicing_paper_2025/tree/mainscripts/generate_readme.py): Functions to generate README files automatically.
-- [scripts/openspliceai_helpers.py](https://github.com/lcscs12345/HBV_splicing_paper_2025/tree/mainscripts/openspliceai_helpers.py): Wrapper for OpenSpliceAI to generate and format splicing predictions from input sequences using PyTorch and pandas.
-- [scripts/splicebert_helpers.py](https://github.com/lcscs12345/HBV_splicing_paper_2025/tree/mainscripts/splicebert_helpers.py): Wrapper for SpliceBERT splice site classification using HuggingFace Transformers with a sliding window approach, alongside utilities for identifying non-splice sites and calculating normalised mutual information (NMI).
-- [scripts/track.R](https://github.com/lcscs12345/HBV_splicing_paper_2025/tree/mainscripts/track.R): R functions to generate track plots for HBV splice variants and splicing efficiency at each splice site in the viral genome.
+- [scripts/common.py](https://github.com/lcscs12345/HBV_splicing_paper_2025/tree/main/scripts/common.py): Utility functions for reading fasta sequences, motif extraction, and calculate performance metrics for a classifier.
+- [scripts/dicts.py](https://github.com/lcscs12345/HBV_splicing_paper_2025/tree/main/scripts/dicts.py): Dictionaries for HBV and human splice sites.
+- [scripts/generate_readme.py](https://github.com/lcscs12345/HBV_splicing_paper_2025/tree/main/scripts/generate_readme.py): Functions to generate README files automatically.
+- [scripts/openspliceai_helpers.py](https://github.com/lcscs12345/HBV_splicing_paper_2025/tree/main/scripts/openspliceai_helpers.py): Wrapper for OpenSpliceAI to generate and format splicing predictions from input sequences using PyTorch and pandas.
+- [scripts/splicebert_helpers.py](https://github.com/lcscs12345/HBV_splicing_paper_2025/tree/main/scripts/splicebert_helpers.py): Wrapper for SpliceBERT splice site classification using HuggingFace Transformers with a sliding window approach, alongside utilities for identifying non-splice sites and calculating normalised mutual information (NMI).
+- [scripts/track.R](https://github.com/lcscs12345/HBV_splicing_paper_2025/tree/main/scripts/track.R): R functions to generate track plots for HBV splice variants and splicing efficiency at each splice site in the viral genome.
 
