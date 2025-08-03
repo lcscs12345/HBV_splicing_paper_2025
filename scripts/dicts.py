@@ -1,4 +1,4 @@
-# Dictionaries for HBV and human splice sites
+# description: Dictionaries for HBV and human splice sites.
 
 ssdict = {"GT(hg19_donor)": "GU (hs donor)",
         "AG(hg19_acceptor)": "AG (hs acceptor)",

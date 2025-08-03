@@ -1,5 +1,10 @@
 #!/usr/bin/env Rscript
 
+
+# description: R functions to generate track plots for HBV splice variants and splicing efficiency at each splice site in the viral genome.
+
+
+
 # 1. Get the script and repo directories
 
 # Get all command-line arguments, including the script file itself

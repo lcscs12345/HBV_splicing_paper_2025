@@ -3,6 +3,8 @@ import torch
 from openspliceai.predict import predict
 
 
+# description: Wrapper for OpenSpliceAI to generate and format splicing predictions from input sequences using PyTorch and pandas.
+
 
 def openspliceai_predict(input_sequence, model, flanking_size):
     predictions = predict.predict(input_sequence, model, flanking_size)

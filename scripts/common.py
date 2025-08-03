@@ -12,6 +12,7 @@ from sklearn.metrics import (
 from scipy.special import expit # Sigmoid function
 
 
+# description: Utility functions for reading fasta sequences, motif extraction, and calculate performance metrics for a classifier.
 
 
 def fasta_to_dataframe(seq):

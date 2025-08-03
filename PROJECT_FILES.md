@@ -1,0 +1,105 @@
+# Comprehensive List of Project Files
+
+This file lists all data files detected as inputs to or outputs from the Jupyter notebooks in this repository.
+
+## Detected Files
+- `../data/huh7/SraRunTable.csv`: Comma-separated values file with tabular data.
+- `../data/map.txt`: Tab-delimited text file with processed results.
+- `../data/processed_files/combined.bed`: Genomic features in BED format.
+- `../data/processed_files/consensus.fa`: Consensus HBV pgRNA sequences.
+- `../data/processed_files/consensus.fas`: Consensus HBV pgRNA sequences.
+- `../data/processed_files/consensus_flank255_510.fa`: Consensus HBV pgRNA sequences.
+- `../data/processed_files/consensus_hg19.fa`: Consensus HBV pgRNA sequences.
+- `../data/processed_files/consensus_splice_sites.bed`: Consensus splice site coordinates.
+- `../data/processed_files/consensus_splice_sites.bed.gz`: Consensus splice site coordinates.
+- `../data/processed_files/conss.all.stats`: Splice site statistics across clusters.
+- `../data/processed_files/conss.bed`: Genomic features in BED format.
+- `../data/processed_files/conss.cds.stats`: Splice site statistics across clusters.
+- `../data/processed_files/cosi.hbv.txt`: Tab-delimited text file with processed results.
+- `../data/processed_files/cosi.pkl.gz`: Wide-format coSI scores for HBV splice donor and acceptor pairs.
+- `../data/processed_files/cosi_long.pkl.gz`: Long-format coSI scores for HBV splice donor and acceptor sites.
+- `../data/processed_files/crosstab_acceptors_perc.csv`: Cluster-level percentage of true splice site labels (donor/acceptor).
+- `../data/processed_files/crosstab_acceptors_perc.pkl.gz`: Cluster-level percentage of true splice site labels (donor/acceptor).
+- `../data/processed_files/crosstab_donors_perc.csv`: Cluster-level percentage of true splice site labels (donor/acceptor).
+- `../data/processed_files/crosstab_donors_perc.pkl.gz`: Cluster-level percentage of true splice site labels (donor/acceptor).
+- `../data/processed_files/cstats.pkl.gz`: Splice site statistics across clusters.
+- `../data/processed_files/exonicss.hbv.txt`: Mapped coSI scores to exonic splice sites.
+- `../data/processed_files/exonicss.txt`: Mapped coSI scores to exonic splice sites.
+- `../data/processed_files/exonicss_genes.fa`: Mapped coSI scores to exonic splice sites.
+- `../data/processed_files/exonicss_genes.split.30mer.fa`: Mapped coSI scores to exonic splice sites.
+- `../data/processed_files/exonicss_mc3.bed`: Mapped coSI scores to exonic splice sites.
+- `../data/processed_files/exonicss_mc3.fa`: Mapped coSI scores to exonic splice sites.
+- `../data/processed_files/exonicss_mc5.bed`: Mapped coSI scores to exonic splice sites.
+- `../data/processed_files/exonicss_mc5.fa`: Mapped coSI scores to exonic splice sites.
+- `../data/processed_files/exons.hs.bed`: Genomic features in BED format.
+- `../data/processed_files/hbv.ss.bed`: Genomic features in BED format.
+- `../data/processed_files/hbvdb_pgrna.fa`: FASTA file containing nucleotide sequences.
+- `../data/processed_files/hbvdb_pgrna.split.30mer.fa`: FASTA file containing nucleotide sequences.
+- `../data/processed_files/hbvdb_pgrna_mc3.bed`: Genomic features in BED format.
+- `../data/processed_files/hbvdb_pgrna_mc3_high.fa`: FASTA file containing nucleotide sequences.
+- `../data/processed_files/hbvdb_pgrna_mc3_low.fa`: FASTA file containing nucleotide sequences.
+- `../data/processed_files/hbvdb_pgrna_mc5.bed`: Genomic features in BED format.
+- `../data/processed_files/hbvdb_pgrna_mc5_high.fa`: FASTA file containing nucleotide sequences.
+- `../data/processed_files/hbvdb_pgrna_mc5_low.fa`: FASTA file containing nucleotide sequences.
+- `../data/processed_files/hg19_genes.split.30mer.fa`: FASTA file containing nucleotide sequences.
+- `../data/processed_files/hg19_mc3.bed`: Genomic features in BED format.
+- `../data/processed_files/hg19_mc3.bed2`: Processed file generated via Bash or Python command in notebook.
+- `../data/processed_files/hg19_mc3.fa`: FASTA file containing nucleotide sequences.
+- `../data/processed_files/hg19_mc5.bed`: Genomic features in BED format.
+- `../data/processed_files/hg19_mc5.bed2`: Processed file generated via Bash or Python command in notebook.
+- `../data/processed_files/hg19_mc5.fa`: FASTA file containing nucleotide sequences.
+- `../data/processed_files/intron.zeta.bed`: coSI scores for splice sites.
+- `../data/processed_files/lib.txt`: Tab-delimited text file with processed results.
+- `../data/processed_files/mc3.bed`: Genomic features in BED format.
+- `../data/processed_files/mc5.bed`: Genomic features in BED format.
+- `../data/processed_files/mgen-7-492-s002.xlsx`: Supplementary file from our previous study
+- `../data/processed_files/nonss.bed`: Genomic features in BED format.
+- `../data/processed_files/sj.out.tab`: STAR splice junction output.
+- `../data/processed_files/splice_acceptor_sj.bed`: Splice donor/acceptor site coordinates.
+- `../data/processed_files/splice_acceptors.bed`: Splice donor/acceptor site coordinates.
+- `../data/processed_files/splice_acceptors_.bed`: Splice donor/acceptor site coordinates.
+- `../data/processed_files/splice_acceptors_inferred.bed`: Splice donor/acceptor site coordinates.
+- `../data/processed_files/splice_acceptors_inferred.bed2`: Splice donor/acceptor site coordinates.
+- `../data/processed_files/splice_donor_sj.bed`: Splice donor/acceptor site coordinates.
+- `../data/processed_files/splice_donors.bed`: Splice donor/acceptor site coordinates.
+- `../data/processed_files/splice_donors_.bed`: Splice donor/acceptor site coordinates.
+- `../data/processed_files/splice_donors_inferred.bed`: Splice donor/acceptor site coordinates.
+- `../data/processed_files/splice_donors_inferred.bed2`: Splice donor/acceptor site coordinates.
+- `../data/processed_files/ss.bed`: Genomic features in BED format.
+- `../data/processed_files/ss.hbv.bed`: Genomic features in BED format.
+- `../data/processed_files/ss.hbv.bed2`: Processed file generated via Bash or Python command in notebook.
+- `../data/processed_files/ss.hs.bed`: Genomic features in BED format.
+- `../data/processed_files/stringtie.bed`: Genomic features in BED format.
+- `../data/processed_files/stringtie.gtf`: Transcript annotation file in GTF format.
+- `../data/processed_files/track.lol.txt`: Tab-delimited text file with processed results.
+- `../data/tcons.txt`: Tab-delimited text file with processed results.
+- `../ref/hbvdb/pgrna/pgrna_flank200.txt`: Tab-delimited text file with processed results.
+- `../ref/hg19_genes.fa`: FASTA file containing nucleotide sequences.
+- `../ref/ipsa_index/hbv.gfx`: Transcript annotation file generated by IPSA pipeline (GFX format).
+- `../ref/ipsa_index/hbv.gtf`: Transcript annotation file in GTF format.
+- `../ref/pgrna/B2/B2.pgrna.fa.map`: Coordinate mapping file in MAFFT mapout format.
+- `../ref/pgrna/C2/C2.pgrna.fa.map`: Coordinate mapping file in MAFFT mapout format.
+- `../ref/pgrna/D3/D3.pgrna.fa.map`: Coordinate mapping file in MAFFT mapout format.
+- `../results/data/Percent_HBV_RNA.csv`: Final proportions of spliced HBV RNAs used in results.
+- `../results/data/coSI.csv`: Final coSI scores for HBV splice sites used in results.
+- `../results/figures/fig1/cosi_splice_variants.pdf`: Generated plot or figure output.
+- `../results/figures/fig1/percent_splice_variants.pdf`: Generated plot or figure output.
+- `../results/figures/fig2/umap.acceptor.leiden.png`: Generated plot or figure output.
+- `../results/figures/fig2/umap.acceptor.png`: Generated plot or figure output.
+- `../results/figures/fig2/umap.donor.png`: Generated plot or figure output.
+- `../results/figures/fig2/umap.donors.leiden.png`: Generated plot or figure output.
+- `../results/figures/fig3/cosi_donor.leiden.png`: Generated plot or figure output.
+- `../results/figures/fig3/typical_splice_sites.png`: Generated plot or figure output.
+- `../results/figures/fig4/umap.logit_acceptors.leiden.png`: Generated plot or figure output.
+- `../results/figures/fig4/umap.logit_acceptors.png`: Generated plot or figure output.
+- `../results/figures/fig4/umap.logit_donors.leiden.png`: Generated plot or figure output.
+- `../results/figures/fig4/umap.logit_donors.png`: Generated plot or figure output.
+- `../results/figures/fig5/conservation_acceptors.png`: Generated plot or figure output.
+- `../results/figures/fig5/conservation_donors.png`: Generated plot or figure output.
+- `../results/figures/fig5/logit_acceptors.png`: Generated plot or figure output.
+- `../results/figures/fig5/logit_donors.png`: Generated plot or figure output.
+- `../results/figures/fig5/openspliceai_acceptors.png`: Generated plot or figure output.
+- `../results/figures/fig5/openspliceai_donors.png`: Generated plot or figure output.
+- `../results/figures/figs1/cosi_splice_variants-sm.pdf`: Generated plot or figure output.
+- `../results/figures/figs1/percent_splice_variants_HBV_genotype.pdf`: Generated plot or figure output.
+- `../results/figures/figs2/cosi_acceptor.leiden.png`: Generated plot or figure output.

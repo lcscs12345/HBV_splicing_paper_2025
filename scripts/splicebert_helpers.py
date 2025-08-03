@@ -11,6 +11,8 @@ import logging
 logging.basicConfig(level=logging.ERROR, format='%(levelname)s: %(message)s')
 
 
+# description: Wrapper for SpliceBERT splice site classification using HuggingFace Transformers with a sliding window approach, alongside utilities for identifying non-splice sites and calculating normalised mutual information (NMI).
+
 
 def nonss(fasta, chrom, start, end):
     fd = fasta[fasta.tid==chrom].copy()
