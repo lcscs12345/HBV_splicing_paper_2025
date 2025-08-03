@@ -31,11 +31,11 @@ dependencies:
   - bwidget=1.10.1=ha770c72_1
   - bzip2=1.0.8=h4bc722e_7
   - c-ares=1.34.5=hb9d3cd8_0
-  - ca-certificates=2025.7.14=hbd8a1cb_0
+  - ca-certificates=2025.8.3=hbd8a1cb_0
   - cached-property=1.5.2=hd8ed1ab_1
   - cached_property=1.5.2=pyha770c72_1
   - cairo=1.18.4=h3394656_0
-  - certifi=2025.7.14=pyhd8ed1ab_0
+  - certifi=2025.8.3=pyhd8ed1ab_0
   - cffi=1.17.1=py313hfab6e84_0
   - charset-normalizer=3.4.2=pyhd8ed1ab_0
   - comm=0.2.3=pyhe01879c_0
@@ -63,6 +63,7 @@ dependencies:
   - gcc_impl_linux-64=15.1.0=h4393ad2_3
   - gdk-pixbuf=2.42.12=h7b179bb_1
   - gfortran_impl_linux-64=15.1.0=h3b9cdf2_3
+  - gh=2.76.2=h76a2195_0
   - ghostscript=10.04.0=h5888daf_0
   - giflib=5.2.2=hd590300_0
   - git-lfs=3.7.0=h59e48b9_0
