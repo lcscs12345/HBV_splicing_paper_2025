@@ -1,0 +1,105 @@
+# General Project Information
+project_title: Decoding the interconnected splicing patterns of hepatitis B virus and host using large language and deep learning models
+project_description: >
+    This repository contains the full pipeline for [our manuscript](https://doi.org/10.1101/2025.07.28.667110), covering data preprocessing, 
+    statistical analysis, and embedding extraction, dimensional reduction, and clustering,
+    and splice site predictions. All steps are documented within the provided Jupyter notebooks.
+
+setup_instructions: |
+    Here are the steps to re-create conda environments used in this study. For simplicity, these steps will install Miniforge3 in the home directory.
+    1. Download and install Miniforge3
+    ```
+    wget https://github.com/conda-forge/miniforge/releases/download/25.3.0-3/Miniforge3-25.3.0-3-Linux-x86_64.sh
+    bash Miniforge3-25.3.0-3-Linux-x86_64.sh -b -p $HOME/miniforge3 # can be installed elsewhere
+    eval "$(/$HOME/miniforge3/bin/conda shell.bash hook)"
+    ```
+    2. Download this GitHub repository
+    ```
+    git clone https://github.com/lcscs12345/HBV_splicing_paper_2025.git
+    ```
+    3. Create conda environments
+    ```
+    # conda environment with various utilities installed
+    conda env create --file environment_files/environment_utils.yml -p $HOME/miniforge3/envs/utils
+    # Fix pyfasta to make it compatible with python 3.13.5 and numpy 2.3.1
+    sh environment_files/fix_pyfasta.sh
+
+    # conda environment with OpenSpliceAI and dependencies installed
+    conda env create --file environment_files/environment_openspliceai.yml -p $HOME/miniforge3/envs/openspliceai
+
+    # conda environment for SpliceBERT dependencies
+    conda env create --file environment_files/environment_llm.yml -p $HOME/miniforge3/envs/llm
+    ```
+    4. Download project files and SpliceBERT and OpenSpliceAI models from [Zenodo](https://doi.org/10.5281/zenodo.16730945) and unzip them within this repository. The complete directory structure should look like:
+    ```
+    HBV_splicing_paper_2025/
+    └── data/
+    └── environment_files/
+    └── jupyter_notebooks/
+    └── ref/ 
+    └── results/
+    └── scripts/
+    └── src/
+    ```
+    
+# Main Project Directory Settings (paths relative to the project root)
+data_dir: data
+environment_files_dir: environment_files
+notebooks_dir: jupyter_notebooks
+ref_dir: ref
+results_dir: results
+scripts_dir: scripts
+src_dir: src
+
+# Processed Data Specifics
+# This is a general description for the directory containing intermediate, generated files.
+# It's crucial for describing files not individually listed in 'file_descriptions'.
+processed_data_dir: . # The relative path to your processed files directory
+
+processed_data_description: |
+  The `data/processed_files/` directory contains intermediate data files generated
+  during the various stages of the analysis pipeline. These files are typically derived
+  from raw data through complex transformations and computations performed by Bash
+  commands and Python scripts executed within the Jupyter notebooks.
+
+  Key output files include:
+  - **Cleaned Data Files (`.csv`, `.pkl.gz`):** Data files in results/data.
+  - **Figure Files  (`.pdf`, '.png'):** Plots in results/figures.
+
+# Table of Contents (set to True to include in README)
+add_toc: True
+
+# Set a threshold for listing individual files in notebook sections.
+# If a notebook has more than this many input/output files, they will be summarized.
+file_listing_threshold: 10 # Example: Set to 5 for very few, 10 for moderate, 20+ for more detail
+
+# Set to true to generate a separate comprehensive README of all detected files.
+# This README will be placed in the 'processed_data_dir' folder.
+generate_processed_files_readme: true
+
+# Name for the comprehensive processed files README (e.g., PROCESSED_FILES.md)
+processed_files_readme_name: PROJECT_FILES.md
+
+# If true, only include files that have a directory component (e.g., 'data/file.txt' is included, 'file.txt' is ignored).
+extract_files_require_directory_path: true # Recommended for pipeline consistency
+
+# GitHub URL prefix for direct notebook links
+github_notebook_url_prefix: "https://github.com/lcscs12345/HBV_splicing_paper_2025"
+
+
+
+usage_section: |
+  ### Installation
+  1.  **Clone the repository:**
+      ```bash
+      git clone [https://github.com/lcscs12345/HBV_splicing_paper_2025.git](https://github.com/lcscs12345/HBV_splicing_paper_2025.git)
+      cd HBV_splicing_paper_2025
+      ```
+
+license_section: |
+  This project is licensed under the MIT License.
+
+contact_info: |
+  For any questions, feedback, or collaboration inquiries, please reach out:
+  -   **Chun Shen LIM:** [https://compgenom.github.io/](https://compgenom.github.io/)
+  -   **GitHub Profile:** [https://github.com/lcscs12345/](https://github.com/lcscs12345/)
