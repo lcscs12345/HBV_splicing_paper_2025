@@ -84,7 +84,7 @@ processed_files_readme_name: PROJECT_FILES.md
 extract_files_require_directory_path: true # Recommended for pipeline consistency
 
 # GitHub URL prefix for direct notebook links
-github_notebook_url_prefix: "https://github.com/lcscs12345/HBV_splicing_paper_2025"
+github_notebook_url_prefix: "https://github.com/lcscs12345/HBV_splicing_paper_2025/tree/main"
 
 
 
