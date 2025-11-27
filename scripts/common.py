@@ -10,7 +10,7 @@ from sklearn.metrics import (
     classification_report
 )
 from scipy.special import expit # Sigmoid function
-
+import logging
 
 # description: Utility functions for reading fasta sequences, motif extraction, and calculate performance metrics for a classifier.
 
@@ -24,6 +24,41 @@ def fasta_to_dataframe(seq):
     df.columns = ['tid','seq']
     return df
 
+
+def substitute_splice_motifs(seq, positions, dinucleotide, sub='AA'):
+    seq = seq.upper()
+    seq_list = list(seq)
+    for p in positions:
+        # Replace motif with AA
+        if p + 1 < len(seq_list):
+            if (dinucleotide == "GT") & (seq_list[p] == dinucleotide[0]) & (seq_list[p+1] == dinucleotide[1]):
+                seq_list[p] = sub[0]
+                seq_list[p+1] = sub[1]
+            else:
+                logging.warning("Position", p, "doesn't match with", dinucleotide)
+                
+            if (dinucleotide == "AG") & (seq_list[p-1] == dinucleotide[0]) & (seq_list[p] == dinucleotide[1]):
+                seq_list[p-1] = sub[0]
+                seq_list[p] = sub[1]
+            else:
+                logging.warning("Position", p, "doesn't match with", dinucleotide)
+                
+    return ''.join(seq_list)
+
+
+def get_non_substring_segments(long_str, sub_str):
+    start = long_str.find(sub_str)
+    if start == -1:
+        # substring not found
+        return [long_str]
+    end = start + len(sub_str)
+    # Segments before and after the substring
+    segments = []
+    if start > 0:
+        segments.append(long_str[:start])
+    if end < len(long_str):
+        segments.append(long_str[end:])
+    return segments
 
 
 def extract_quadruplet_rows(
@@ -123,6 +158,31 @@ def extract_quadruplet_rows(
     return df_pre, df_first, df_second, df_third
 
 
+def bootstrap_conservation(
+    data, 
+    genotype, 
+    splice_site,
+    genotype_col="genotype", 
+    splice_site_col="Splice site",
+    id_col="id",    
+    position_col="position", 
+    group_col="group", 
+    groups=["Higher usage", "Lower usage"], 
+    n_bootstrap=10000
+):
+    data = data[(data[genotype_col]==genotype) & (data[splice_site_col]==splice_site)].copy()
+    
+    results = {g: [] for g in groups}
+    for i in range(n_bootstrap):
+        sample_id = data.drop_duplicates(id_col).sample(frac=0.1, replace=True, random_state=i)[[id_col]]
+        sample = pd.merge(sample_id, data)
+        for g in groups:
+            counts = sample[sample[group_col] == g].value_counts(position_col)
+            prop = (counts/sample_id.shape[0]).mean() #.reset_index()
+            # prop.columns = [position_col, "proportion"]
+            results[g].append(prop)
+            
+    return results
 
 
 def performance_metrics(y_true, y_pred, threshold, precision=2):

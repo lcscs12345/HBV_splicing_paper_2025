@@ -27,6 +27,15 @@ conda env create --file environment_files/environment_openspliceai.yml -p $HOME/
 
 # conda environment for SpliceBERT dependencies
 conda env create --file environment_files/environment_llm.yml -p $HOME/miniforge3/envs/llm
+
+# NOTE: Alternatively, use micromamba as a faster drop-in replacement for conda to create environments
+# Install micromamba
+conda install -c conda-forge micromamba
+
+# Example: using micromamba instead of conda
+micromamba create -f environment_files/environment_utils.yml -p $HOME/micromamba/envs/utils
+
+# Subsequent steps (activation and usage) remain the same as with conda.
 ```
 4. Download project files and SpliceBERT and OpenSpliceAI models from [Zenodo](https://doi.org/10.5281/zenodo.16730945) 
 and unzip them within this repository. The complete directory structure should look like:
@@ -62,29 +71,44 @@ Compares the proportions of spliced HBV RNAs and evaluates splice site-level spl
 - **Input Files:**
   - `data/huh7/SraRunTable.csv`: Comma-separated values file with tabular data.
   - `data/processed_files/cosi.hbv.txt`: Tab-delimited text file with processed results.
+  - `data/processed_files/cosi.pkl.gz`: Wide-format coSI scores for HBV splice donor and acceptor pairs.
   - `data/processed_files/cosi_long.pkl.gz`: Long-format coSI scores for HBV splice donor and acceptor sites.
   - `data/processed_files/map.txt`: Tab-delimited text file with processed results.
   - `data/processed_files/mgen-7-492-s002.xlsx`: Supplementary file from our previous study
   - `data/processed_files/tcons.txt`: Tab-delimited text file with processed results.
   - `data/processed_files/track.lol.txt`: Tab-delimited text file with processed results.
 - **Output Files:**
-  - This notebook generates 4 'Generated plot or figure output.' files, 2 'Tab-delimited text file with processed results.' files, 1 'Final proportions of spliced HBV RNAs used in results.' files, 6 other files. For a comprehensive list, see the [Project Files README](./PROJECT_FILES.md).
+  - This notebook generates 6 'Generated plot or figure output.' files, 2 'Tab-delimited text file with processed results.' files, 1 'Final proportions of spliced HBV RNAs used in results.' files, 6 other files. For a comprehensive list, see the [Project Files README](./PROJECT_FILES.md).
 
-### [02-splicebert_embeddings.ipynb: Nucleotide embedding analysis for HBV and host splicing patterns](https://github.com/lcscs12345/HBV_splicing_paper_2025/tree/main/jupyter_notebooks/02-splicebert_embeddings.ipynb)
+### [02a-splicebert_embeddings-training_set_full.ipynb: Nucleotide embedding analysis for HBV and host splicing patterns (full Spliceator training set)](https://github.com/lcscs12345/HBV_splicing_paper_2025/tree/main/jupyter_notebooks/02a-splicebert_embeddings-training_set_full.ipynb)
 Extracts nucleotide embeddings, applies dimensionality reduction, and performs clustering to uncover splice site sequence patterns in both HBV and host genomes.
 - **Input Files:**
   - This notebook uses 3 'Coordinate mapping file in MAFFT mapout format.' files, 3 'Splice site statistics across clusters.' files, 2 'Splice donor/acceptor site coordinates.' files, 7 other files. For a comprehensive list, see the [Project Files README](./PROJECT_FILES.md).
 - **Output Files:**
-  - This notebook generates 10 'Splice donor/acceptor site coordinates.' files, 8 'Genomic features in BED format.' files, 7 'Generated plot or figure output.' files, 19 other files. For a comprehensive list, see the [Project Files README](./PROJECT_FILES.md).
+  - This notebook generates 12 'Splice donor/acceptor site coordinates.' files, 9 'Genomic features in BED format.' files, 7 'Generated plot or figure output.' files, 20 other files. For a comprehensive list, see the [Project Files README](./PROJECT_FILES.md).
+
+### [02b-splicebert_embeddings-training_set_non_human.ipynb: Nucleotide embedding analysis for HBV and host splicing patterns (fine-tuning without human splice sites)](https://github.com/lcscs12345/HBV_splicing_paper_2025/tree/main/jupyter_notebooks/02b-splicebert_embeddings-training_set_non_human.ipynb)
+Extracts nucleotide embeddings, applies dimensionality reduction, and performs clustering to uncover splice site sequence patterns in both HBV and host genomes.
+- **Input Files:**
+  - `data/processed_files/consensus_splice_sites.bed.gz`: Consensus splice site coordinates.
+  - `data/processed_files/conss_nonhs.all.stats`: Splice site statistics across clusters.
+  - `data/processed_files/conss_nonhs.cds.stats`: Splice site statistics across clusters.
+  - `data/processed_files/crosstab_acceptors_perc_nonhs.pkl.gz`: Cluster-level percentage of true splice site labels (donor/acceptor).
+  - `data/processed_files/crosstab_donors_perc_nonhs.pkl.gz`: Cluster-level percentage of true splice site labels (donor/acceptor).
+  - `data/processed_files/cstats_nonhs.pkl.gz`: Splice site statistics across clusters.
+  - `data/processed_files/exonicss_nonhs.hbv.txt`: Mapped coSI scores to exonic splice sites.
+  - `data/processed_files/exonicss_nonhs.txt`: Mapped coSI scores to exonic splice sites.
+- **Output Files:**
+  - This notebook generates 7 'Generated plot or figure output.' files, 4 'Cluster-level percentage of true splice site labels (donor/acceptor).' files, 4 'Processed file generated via Bash or Python command in notebook.' files, 6 other files. For a comprehensive list, see the [Project Files README](./PROJECT_FILES.md).
 
 ### [03a-splicebert_prediction-donor.ipynb: Splicing propensity and donor site classification using SpliceBERT](https://github.com/lcscs12345/HBV_splicing_paper_2025/tree/main/jupyter_notebooks/03a-splicebert_prediction-donor.ipynb)
 Analyses splicing propensity and classifies HBV splice donor sites using SpliceBERT, leveraging transformer-based sequence representations to identify predictive features. Includes performance metrics evaluation and splice donor site conservation analysis to assess model accuracy and evolutionary constraints, respectively.
 - **Input Files:**
   - `data/processed_files/cosi_long.pkl.gz`: Long-format coSI scores for HBV splice donor and acceptor sites.
+  - `ref/hbvdb/pgrna/pgrna_flank200.txt`: Tab-delimited text file with processed results.
 - **Output Files:**
   - `ref/hbvdb/pgrna/pgrna_flank200.txt`: Tab-delimited text file with processed results.
-  - `results/figures/fig4/umap.logit_donors.leiden.png`: Generated plot or figure output.
-  - `results/figures/fig4/umap.logit_donors.png`: Generated plot or figure output.
+  - `ref/hbvdb/pgrna/pgrna_flank200_GT-AA.txt`: Tab-delimited text file with processed results.
   - `results/figures/fig5/conservation_donors.png`: Generated plot or figure output.
   - `results/figures/fig5/logit_donors.png`: Generated plot or figure output.
 
@@ -92,7 +116,9 @@ Analyses splicing propensity and classifies HBV splice donor sites using SpliceB
 Analyses splicing propensity and classifies HBV splice acceptor sites using SpliceBERT, leveraging transformer-based sequence representations to identify predictive features. Includes performance metrics evaluation and splice acceptor site conservation analysis to assess model accuracy and evolutionary constraints, respectively.
 - **Input Files:**
   - `data/processed_files/cosi_long.pkl.gz`: Long-format coSI scores for HBV splice donor and acceptor sites.
+  - `ref/hbvdb/pgrna/pgrna_flank200.txt`: Tab-delimited text file with processed results.
 - **Output Files:**
+  - `ref/hbvdb/pgrna/pgrna_flank200_AG-AA.txt`: Tab-delimited text file with processed results.
   - `results/figures/fig4/umap.logit_acceptors.leiden.png`: Generated plot or figure output.
   - `results/figures/fig4/umap.logit_acceptors.png`: Generated plot or figure output.
   - `results/figures/fig5/conservation_acceptors.png`: Generated plot or figure output.
@@ -111,8 +137,12 @@ Integrates a deep learning-based framework into the study by performing splice s
 Helps generate the frequency of splice site motifs across genomic sequences.
 - **Input Files:**
   - `data/processed_files/cosi_long.pkl.gz`: Long-format coSI scores for HBV splice donor and acceptor sites.
+  - `data/processed_files/hbvdb_pgrna_mc3.bed`: Genomic features in BED format.
+  - `data/processed_files/hbvdb_pgrna_mc3.pkl.gz`: Processed file generated via Bash or Python command in notebook.
+  - `data/processed_files/hbvdb_pgrna_mc5.bed`: Genomic features in BED format.
+  - `data/processed_files/hbvdb_pgrna_mc5.pkl.gz`: Processed file generated via Bash or Python command in notebook.
 - **Output Files:**
-  - This notebook generates 10 'FASTA file containing nucleotide sequences.' files, 6 'Genomic features in BED format.' files, 6 'Mapped coSI scores to exonic splice sites.' files, 2 other files. For a comprehensive list, see the [Project Files README](./PROJECT_FILES.md).
+  - This notebook generates 10 'FASTA file containing nucleotide sequences.' files, 6 'Genomic features in BED format.' files, 6 'Mapped coSI scores to exonic splice sites.' files, 6 other files. For a comprehensive list, see the [Project Files README](./PROJECT_FILES.md).
 
 ## Scripts
 - [scripts/common.py](https://github.com/lcscs12345/HBV_splicing_paper_2025/tree/main/scripts/common.py): Utility functions for reading fasta sequences, motif extraction, and calculate performance metrics for a classifier.

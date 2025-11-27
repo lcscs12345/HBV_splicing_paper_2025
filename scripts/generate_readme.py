@@ -207,7 +207,7 @@ def extract_file_usages(notebook_path: Path, project_root: Path, require_directo
             # Broader pattern
             r"(?:to_csv|to_excel|to_pickle|to_json|to_parquet|np\.save|np\.savez|fig\.savefig|plt\.savefig|io\.open|open|write_csv|write_excel|save_data)\(\s*['\"](?P<file_path>[^'\"]+)['\"]\s*(?:,|\))",
             r"(?:saveRDS|save)\(\s*['\"](?P<file_path>[^'\"]+)['\"]\s*(?:,|\))", # R specific
-            # Bash outputs/moves (redirection, mv, cp) - RE-INTEGRATED
+            # Bash outputs/moves (redirection, mv, cp)
             r'(?:>\s*|>>\s*|2>\s*|2>&1\s*>\s*)(?P<file_path>[^\s|&;]+)', # Bash redirection (capture anything until space/pipe/ampersand/semicolon)
             r'\b(?:mv|cp)\s+[^\s]+\s+(?P<file_path>[^\s|&;]+)' # Bash mv/cp destination (capture the last non-space arg)
         ]
