@@ -29,6 +29,15 @@ setup_instructions: |
 
     # conda environment for SpliceBERT dependencies
     conda env create --file environment_files/environment_llm.yml -p $HOME/miniforge3/envs/llm
+    
+    # NOTE: Alternatively, use micromamba as a faster drop-in replacement for conda to create environments
+    # Install micromamba
+    conda install -c conda-forge micromamba
+
+    # Example: using micromamba instead of conda
+    micromamba create -f environment_files/environment_utils.yml -p $HOME/micromamba/envs/utils
+
+    # Subsequent steps (activation and usage) remain the same as with conda.
     ```
     4. Download project files and SpliceBERT and OpenSpliceAI models from [Zenodo](https://doi.org/10.5281/zenodo.16730945) 
     and unzip them within this repository. The complete directory structure should look like:
